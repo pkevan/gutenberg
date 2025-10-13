@@ -154,11 +154,9 @@ function PostLockedModal() {
 
 	// Avoid sending the modal if sync is supported.
 	// TODO: potentially incorporate the isLocked logic into the sync flow.
-	if ( window.__experimentalEnableSync ) {
+	if ( window.__experimentalEnableSync && supportsSync ) {
 		if ( globalThis.IS_GUTENBERG_PLUGIN ) {
-			if ( supportsSync ) {
-				return null;
-			}
+			return null;
 		}
 	}
 
