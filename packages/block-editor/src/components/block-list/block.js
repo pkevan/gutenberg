@@ -238,6 +238,8 @@ function BlockListBlock( {
 			} }
 		>
 			<BlockCrashBoundary
+				blockName={ name }
+				clientId={ clientId }
 				fallback={
 					<Block className="has-warning">
 						<BlockCrashWarning />

@@ -280,6 +280,11 @@ export function mergeCrdtBlocks(
 
 					// If attributes are not set on the yblock, use the new values.
 					if ( ! currentAttributes ) {
+						// eslint-disable-next-line no-console
+						console.warn(
+							'[CRDT] Block missing attributes map, recreating:',
+							{ blockName: block.name }
+						);
 						yblock.set(
 							key,
 							createNewYAttributeMap( block.name, value )
@@ -297,6 +302,25 @@ export function mergeCrdtBlocks(
 								attributeName,
 								currentAttribute
 							);
+
+							if ( ! isExpectedType ) {
+								// eslint-disable-next-line no-console
+								console.warn(
+									'[CRDT] Attribute type mismatch:',
+									{
+										blockName: block.name,
+										attributeName,
+										expectedType: getBlockAttributeType(
+											block.name,
+											attributeName
+										)?.type,
+										actualType:
+											currentAttribute instanceof Y.Text
+												? 'Y.Text'
+												: typeof currentAttribute,
+									}
+								);
+							}
 
 							const isAttributeChanged =
 								! isExpectedType ||
@@ -334,6 +358,14 @@ export function mergeCrdtBlocks(
 					let yInnerBlocks = yblock.get( key );
 
 					if ( ! ( yInnerBlocks instanceof Y.Array ) ) {
+						// eslint-disable-next-line no-console
+						console.warn(
+							'[CRDT] innerBlocks is not Y.Array, recreating:',
+							{
+								blockName: block.name,
+								actualType: typeof yInnerBlocks,
+							}
+						);
 						yInnerBlocks = new Y.Array< YBlock >();
 						yblock.set( key, yInnerBlocks );
 					}
@@ -381,7 +413,14 @@ export function mergeCrdtBlocks(
 		}
 
 		if ( knownClientIds.has( clientId ) ) {
-			clientId = uuidv4();
+			const newClientId = uuidv4();
+			// eslint-disable-next-line no-console
+			console.warn( '[CRDT] Duplicate clientId detected, regenerating:', {
+				originalClientId: clientId,
+				newClientId,
+				blockIndex: j,
+			} );
+			clientId = newClientId;
 			yblock.set( 'clientId', clientId );
 		}
 		knownClientIds.add( clientId );
