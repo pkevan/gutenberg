@@ -12,9 +12,19 @@ class BlockCrashBoundary extends Component {
 		};
 	}
 
-	componentDidCatch() {
+	componentDidCatch( error, errorInfo ) {
 		this.setState( {
 			hasError: true,
+		} );
+
+		const { blockName, clientId } = this.props;
+		// eslint-disable-next-line no-console
+		console.warn( '[BlockCrashBoundary] Block crashed:', {
+			blockName,
+			clientId,
+			error: error?.message,
+			stack: error?.stack,
+			componentStack: errorInfo?.componentStack,
 		} );
 	}
 
